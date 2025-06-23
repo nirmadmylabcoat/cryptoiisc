@@ -21,7 +21,7 @@ def kill_avpvote_processes():
     )
 
 def main():
-    for m in range(50, MAX_M + 1):
+    for m in range(1, MAX_M + 1):
         print(f"\n🔍 Testing with m = {m} parties...")
         kill_avpvote_processes()
         run("avpclean.exe")
