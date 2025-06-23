@@ -165,3 +165,127 @@ This module tallies the final result of the Additive Veto Protocol (AVP) by read
    ```bash
    ./avptally.exe
 
+## 🔄 `shared_sync.hpp`: Shared Memory Synchronization for AVP
+
+This header provides a minimal synchronization mechanism that allows **multiple parties** to block until all others have reached the same point. It's a **barrier-style utility** implemented using Boost Interprocess primitives.
+
+---
+
+### 🔧 What It Does
+
+- Defines a shared `SyncBlock` structure containing:
+  - A mutex for safe access to shared state
+  - A counting semaphore to release all waiting parties
+  - An `arrived` counter to track how many parties have reached the sync point
+- Provides a function `get_sync_block()` to access a **shared instance** from Boost-managed shared memory.
+
+---
+
+### 📦 Dependencies
+
+- **Boost Interprocess**:
+  - `managed_shared_memory`: Used to create or access a named memory segment.
+  - `interprocess_mutex`, `interprocess_semaphore`: Cross-process synchronization.
+  - `scoped_lock`: For safe, automatic lock management.
+
+---
+
+### 🚦 When It's Used
+
+- Inside `avpvote.cpp`:  
+  All voting parties must complete writing their polynomial shares **before** moving on to compute the encoded vote.  
+  This header ensures they all **wait at the barrier** before proceeding.
+
+---
+
+### 🛠 How It Works
+
+1. Each party calls `arrive_and_wait(total)` with the total number of parties.
+2. They block until all others have arrived.
+3. Once the last party arrives, the semaphore releases everyone.
+4. They proceed simultaneously to the next phase.
+
+---
+
+### 🧽 Resetting the Sync
+
+- The optional `reset()` function allows the sync state to be cleared between protocol runs.
+- Typically called during cleanup or reruns.
+
+---
+
+### 📝 Notes
+
+- This is a low-level utility — it **does not require compilation** on its own.
+- It’s included via `#include "shared_sync.hpp"` in `avpvote.cpp`.
+
+---
+
+### ✅ Summary
+
+> `shared_sync.hpp` is the AVP protocol's internal "meeting point" — it ensures all parties are aligned before continuing.
+
+## 🧪 `find_max_m_powershell.py`: Automated Stress Testing for AVP Protocol
+
+This script automates testing the Additive Veto Protocol (AVP) implementation by incrementally increasing the number of parties `m` and identifying the **maximum value where the protocol remains sound**.
+
+---
+
+### 🔧 What It Does
+
+- Automatically runs the full AVP pipeline for `m = 1` to `m = 100`:
+  - Cleans up shared memory (`avpclean.exe`)
+  - Initializes the public parameters (`avpinit.exe`)
+  - Launches `m` parallel `avpvote.exe` processes
+  - Runs `avptally.exe` to verify output
+- Stops when the protocol **breaks** (i.e., some result exceeds the `q/4` threshold).
+
+---
+
+### 💡 Features
+
+- Ensures a clean slate before each run (`Stop-Process`, `avpclean`).
+- Uses PowerShell's `Start-Process` to simulate parallel execution of vote processes.
+- Includes a `time.sleep(30)` delay to give all processes time to finish writing their votes.
+- Stops as soon as a protocol failure is detected, printing the last successful value of `m`.
+
+---
+
+### 🧰 Requirements
+
+- Windows (due to use of PowerShell commands)
+- Python 3.x
+- All compiled executables (`avpclean.exe`, `avpinit.exe`, `avpvote.exe`, `avptally.exe`) present in the working directory
+
+---
+
+### ▶️ Usage
+1. Run:
+   ```bash
+    python find_max_m_powershell.py
+
+## 📈 `plot_q_vs_m.py`: Visualizing AVP Protocol Breakdown
+
+This script plots the relationship between the modulus `q` and the maximum number of parties `m_max` the Additive Veto Protocol (AVP) can support before breaking.
+
+---
+
+### 📊 What It Does
+
+- Displays a **line graph** of `q` (modulus) vs. `m_max` (maximum parties before failure).
+- Helps visualize how increasing `q` allows the protocol to tolerate larger party sizes.
+- Uses hardcoded experimental values collected from running your AVP implementation.
+
+---
+
+### 🧰 Dependencies
+
+- Python 3.x
+- `matplotlib` (install with `pip install matplotlib`)
+
+---
+
+### ▶️ How to Run
+1. Run:
+   ```bash
+    python plot_q_vs_m.py
