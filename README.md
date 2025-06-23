@@ -72,7 +72,9 @@ Run this:
 1. Compile:
      ```bash
      g++ avpclean.cpp -o avpclean.exe -I <path_to_boost>
-     ./avpclean.exe
+2. Run:
+   ```bash
+   ./avpclean.exe
 
 ## 🗳 `avpvote.cpp`: Vote Encoding and Sharing in AVP Protocol
 
@@ -121,7 +123,45 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
 ---
 
 ### 🛠 How to Compile and Use
+1. Compile:
+   ```bash
+    g++ avpvote.cpp -o avpvote.exe -I <path_to_boost>
+2. Run:
+     ```bash
+    ./avpvote.exe <party_id> <vote:0|1> <total_parties>
 
-```bash
-g++ avpvote.cpp -o avpvote.exe -I <path_to_boost>
-./avpvote.exe <party_id> <vote:0|1> <total_parties>
+## 📊 `avptally.cpp`: Vote Tallying in the Additive Veto Protocol (AVP)
+
+This module tallies the final result of the Additive Veto Protocol (AVP) by reading all encoded votes from shared memory and checking if any party vetoed.
+
+---
+
+### 🔧 What It Does
+
+- Reads all `PartyVote_i` segments from shared memory (each representing a party's encoded vote).
+- Sums them coefficient-wise using modular arithmetic.
+- Decodes the result using a centered modulus (`mod_q_centered`) and the **infinity norm** of the final polynomial.
+- Determines the outcome:
+  - ✅ **ALL VOTED YES (0)** if norm ≤ `q/4`
+  - ❌ **SOMEONE VETOED (1)** otherwise
+
+---
+
+### 🔗 Interactions
+
+- **Reads** from:  
+  `PartyVote_0`, `PartyVote_1`, ..., `PartyVote_n−1` — all party vote encodings written by `avpvote.cpp`.
+
+- **No writes**:  
+  It only reads and outputs the result.
+
+---
+
+### ⚙️ How to Use
+1. Compile: 
+    ```bash
+    g++ avptally.cpp -o avptally.exe -I <path_to_boost>
+2. Run:
+   ```bash
+   ./avptally.exe
+
