@@ -1,3 +1,17 @@
+# 🛡️ Additive Veto Protocol (AVP)
+
+The Additive Veto Protocol is a simple, privacy-preserving voting scheme where:
+
+- Each party contributes an encrypted "yes" or "veto" vote.
+- If **all** parties vote "yes", the result reveals **yes**.
+- If **even one** party vetoes (votes 1), the final output is scrambled and shows **vetoed**.
+
+It works by encoding votes as polynomials in a shared modular ring, adding controlled noise, and then securely aggregating all votes.
+
+This repository contains the core implementation in C++ with Boost shared memory, along with Python scripts for automated testing and analysis.
+
+---
+
 ## 🔧 `avpinit.cpp`: Shared Memory Initialization for AVP Protocol
 
 This program sets up the **initial shared state** for the Additive Veto Protocol (AVP) by generating and storing two key polynomials in shared memory:
@@ -40,6 +54,8 @@ This file should be run **once at the start** of each protocol instance, before 
    ```bash
    ./avpinit.exe
 
+--- 
+
 ## 🧹 `avpclean.cpp`: Cleanup Utility for Shared Memory
 
 This utility removes all shared memory segments created by the Additive Veto Protocol (AVP).  
@@ -75,6 +91,8 @@ Run this:
 2. Run:
    ```bash
    ./avpclean.exe
+
+--- 
 
 ## 🗳 `avpvote.cpp`: Vote Encoding and Sharing in AVP Protocol
 
@@ -130,6 +148,8 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
      ```bash
     ./avpvote.exe <party_id> <vote:0|1> <total_parties>
 
+--- 
+
 ## 📊 `avptally.cpp`: Vote Tallying in the Additive Veto Protocol (AVP)
 
 This module tallies the final result of the Additive Veto Protocol (AVP) by reading all encoded votes from shared memory and checking if any party vetoed.
@@ -164,6 +184,8 @@ This module tallies the final result of the Additive Veto Protocol (AVP) by read
 2. Run:
    ```bash
    ./avptally.exe
+
+--- 
 
 ## 🔄 `shared_sync.hpp`: Shared Memory Synchronization for AVP
 
@@ -225,6 +247,8 @@ This header provides a minimal synchronization mechanism that allows **multiple 
 
 > `shared_sync.hpp` is the AVP protocol's internal "meeting point" — it ensures all parties are aligned before continuing.
 
+--- 
+
 ## 🧪 `find_max_m_powershell.py`: Automated Stress Testing for AVP Protocol
 
 This script automates testing the Additive Veto Protocol (AVP) implementation by incrementally increasing the number of parties `m` and identifying the **maximum value where the protocol remains sound**.
@@ -263,6 +287,8 @@ This script automates testing the Additive Veto Protocol (AVP) implementation by
 1. Run:
    ```bash
     python find_max_m_powershell.py
+
+--- 
 
 ## 📈 `plot_q_vs_m.py`: Visualizing AVP Protocol Breakdown
 
