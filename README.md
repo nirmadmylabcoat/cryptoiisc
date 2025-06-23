@@ -20,8 +20,6 @@ This program sets up the **initial shared state** for the Additive Veto Protocol
 
 These polynomials are accessed by all parties to securely encode their individual votes.
 
---
-
 ### 🚀 What It Does
 
 - Generates two polynomials of degree 64:
@@ -34,15 +32,11 @@ These polynomials are accessed by all parties to securely encode their individua
   - `avpvote.cpp` → to encode each party's vote
   - `avptally.cpp` → to decode the final vote sum
 
----
-
 ### 🔗 Role in the Protocol
 
 This file should be run **once at the start** of each protocol instance, before any parties vote.
 
 > Think of this as the **setup phase** for all parties — similar to a key generation or public parameter broadcast step in other cryptographic protocols.
-
----
 
 ### ⚙️ How to Run
 
@@ -61,8 +55,6 @@ This file should be run **once at the start** of each protocol instance, before 
 This utility removes all shared memory segments created by the Additive Veto Protocol (AVP).  
 It ensures the system is reset and ready for a new protocol round.
 
----
-
 ### 🔧 What It Does
 
 - Deletes all known shared memory regions used by:
@@ -73,16 +65,12 @@ It ensures the system is reset and ready for a new protocol round.
 
 > This ensures no stale data is left from previous runs.
 
----
-
 ### 🧪 When to Run
 
 Run this:
 - **Before starting a new voting round**
 - **After a failed/aborted protocol run**
 - Anytime you want to ensure a clean state
-
----
 
 ### ⚙️ How to Compile and Run
 1. Compile:
@@ -98,15 +86,11 @@ Run this:
 
 This program handles the **secure, privacy-preserving encoding of a vote** by a single party in the Additive Veto Protocol (AVP).
 
----
-
 ### 🔧 Responsibilities
 
 - Generates **additive shares** of a vote-masked polynomial, ensuring total sum is zero across all parties.
 - Reads shared polynomials (`a`) and uses it to encode a party’s vote.
 - Writes the encoded vote (`V_i`) to shared memory for tallying later.
-
----
 
 ### 🔗 Interactions
 
@@ -118,8 +102,6 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
 - Uses:
   - `shared_sync.hpp` to synchronize all parties (barrier after share exchange)
 
----
-
 ### ⚙️ Vote Encoding Logic
 
 - If vote = `0`:  
@@ -130,15 +112,11 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
   Encodes `V_i` as a **random high-noise polynomial**  
   → Destroys the final result ⇒ veto.
 
----
-
 ### 📦 Dependencies
 
 - **Boost Interprocess**: For all shared memory communication.
 - **C++ Standard Library**: Vectors, randomness, math, memory operations.
 - **Local File**: `shared_sync.hpp` for party synchronization.
-
----
 
 ### 🛠 How to Compile and Use
 1. Compile:
@@ -154,8 +132,6 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
 
 This module tallies the final result of the Additive Veto Protocol (AVP) by reading all encoded votes from shared memory and checking if any party vetoed.
 
----
-
 ### 🔧 What It Does
 
 - Reads all `PartyVote_i` segments from shared memory (each representing a party's encoded vote).
@@ -165,8 +141,6 @@ This module tallies the final result of the Additive Veto Protocol (AVP) by read
   - ✅ **ALL VOTED YES (0)** if norm ≤ `q/4`
   - ❌ **SOMEONE VETOED (1)** otherwise
 
----
-
 ### 🔗 Interactions
 
 - **Reads** from:  
@@ -174,8 +148,6 @@ This module tallies the final result of the Additive Veto Protocol (AVP) by read
 
 - **No writes**:  
   It only reads and outputs the result.
-
----
 
 ### ⚙️ How to Use
 1. Compile: 
@@ -191,8 +163,6 @@ This module tallies the final result of the Additive Veto Protocol (AVP) by read
 
 This header provides a minimal synchronization mechanism that allows **multiple parties** to block until all others have reached the same point. It's a **barrier-style utility** implemented using Boost Interprocess primitives.
 
----
-
 ### 🔧 What It Does
 
 - Defines a shared `SyncBlock` structure containing:
@@ -201,8 +171,6 @@ This header provides a minimal synchronization mechanism that allows **multiple 
   - An `arrived` counter to track how many parties have reached the sync point
 - Provides a function `get_sync_block()` to access a **shared instance** from Boost-managed shared memory.
 
----
-
 ### 📦 Dependencies
 
 - **Boost Interprocess**:
@@ -210,15 +178,11 @@ This header provides a minimal synchronization mechanism that allows **multiple 
   - `interprocess_mutex`, `interprocess_semaphore`: Cross-process synchronization.
   - `scoped_lock`: For safe, automatic lock management.
 
----
-
 ### 🚦 When It's Used
 
 - Inside `avpvote.cpp`:  
   All voting parties must complete writing their polynomial shares **before** moving on to compute the encoded vote.  
   This header ensures they all **wait at the barrier** before proceeding.
-
----
 
 ### 🛠 How It Works
 
@@ -227,21 +191,15 @@ This header provides a minimal synchronization mechanism that allows **multiple 
 3. Once the last party arrives, the semaphore releases everyone.
 4. They proceed simultaneously to the next phase.
 
----
-
 ### 🧽 Resetting the Sync
 
 - The optional `reset()` function allows the sync state to be cleared between protocol runs.
 - Typically called during cleanup or reruns.
 
----
-
 ### 📝 Notes
 
 - This is a low-level utility — it **does not require compilation** on its own.
 - It’s included via `#include "shared_sync.hpp"` in `avpvote.cpp`.
-
----
 
 ### ✅ Summary
 
@@ -253,8 +211,6 @@ This header provides a minimal synchronization mechanism that allows **multiple 
 
 This script automates testing the Additive Veto Protocol (AVP) implementation by incrementally increasing the number of parties `m` and identifying the **maximum value where the protocol remains sound**.
 
----
-
 ### 🔧 What It Does
 
 - Automatically runs the full AVP pipeline for `m = 1` to `m = 100`:
@@ -264,8 +220,6 @@ This script automates testing the Additive Veto Protocol (AVP) implementation by
   - Runs `avptally.exe` to verify output
 - Stops when the protocol **breaks** (i.e., some result exceeds the `q/4` threshold).
 
----
-
 ### 💡 Features
 
 - Ensures a clean slate before each run (`Stop-Process`, `avpclean`).
@@ -273,15 +227,11 @@ This script automates testing the Additive Veto Protocol (AVP) implementation by
 - Includes a `time.sleep(30)` delay to give all processes time to finish writing their votes.
 - Stops as soon as a protocol failure is detected, printing the last successful value of `m`.
 
----
-
 ### 🧰 Requirements
 
 - Windows (due to use of PowerShell commands)
 - Python 3.x
 - All compiled executables (`avpclean.exe`, `avpinit.exe`, `avpvote.exe`, `avptally.exe`) present in the working directory
-
----
 
 ### ▶️ Usage
 1. Run:
@@ -294,22 +244,16 @@ This script automates testing the Additive Veto Protocol (AVP) implementation by
 
 This script plots the relationship between the modulus `q` and the maximum number of parties `m_max` the Additive Veto Protocol (AVP) can support before breaking.
 
----
-
 ### 📊 What It Does
 
 - Displays a **line graph** of `q` (modulus) vs. `m_max` (maximum parties before failure).
 - Helps visualize how increasing `q` allows the protocol to tolerate larger party sizes.
 - Uses hardcoded experimental values collected from running your AVP implementation.
 
----
-
 ### 🧰 Dependencies
 
 - Python 3.x
 - `matplotlib` (install with `pip install matplotlib`)
-
----
 
 ### ▶️ How to Run
 1. Run:
