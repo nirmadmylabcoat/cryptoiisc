@@ -36,3 +36,37 @@ This file should be run **once at the start** of each protocol instance, before 
 2. Compile:
    ```bash
    g++ avpinit.cpp -o avpinit.exe -I <path_to_boost>
+
+## 🧹 `avpclean.cpp`: Cleanup Utility for Shared Memory
+
+This utility removes all shared memory segments created by the Additive Veto Protocol (AVP).  
+It ensures the system is reset and ready for a new protocol round.
+
+---
+
+### 🔧 What It Does
+
+- Deletes all known shared memory regions used by:
+  - Shared polynomials: `shared_poly_a`, `shared_poly_x`
+  - Synchronization: `SharedSync`
+  - Vote results: `PartyVote_0` to `PartyVote_9`
+  - Shares: `Share_i_j` for all `i, j ∈ [0, 9]`
+
+> This ensures no stale data is left from previous runs.
+
+---
+
+### 🧪 When to Run
+
+Run this:
+- **Before starting a new voting round**
+- **After a failed/aborted protocol run**
+- Anytime you want to ensure a clean state
+
+---
+
+### ⚙️ How to Compile and Run
+
+```bash
+g++ avpclean.cpp -o avpclean.exe -I <path_to_boost>
+./avpclean.exe
