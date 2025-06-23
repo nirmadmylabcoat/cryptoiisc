@@ -125,10 +125,10 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
 ### 🛠 How to Compile and Use
 1. Compile:
    ```bash
-  g++ avpvote.cpp -o avpvote.exe -I <path_to_boost>
+    g++ avpvote.cpp -o avpvote.exe -I <path_to_boost>
 2. Run:
      ```bash
-  ./avpvote.exe <party_id> <vote:0|1> <total_parties>
+    ./avpvote.exe <party_id> <vote:0|1> <total_parties>
 
 ## 📊 `avptally.cpp`: Vote Tallying in the Additive Veto Protocol (AVP)
 
