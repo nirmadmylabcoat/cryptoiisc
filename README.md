@@ -36,6 +36,9 @@ This file should be run **once at the start** of each protocol instance, before 
 2. Compile:
    ```bash
    g++ avpinit.cpp -o avpinit.exe -I <path_to_boost>
+3. Run:
+   ```bash
+   ./avpinit.exe
 
 ## 🧹 `avpclean.cpp`: Cleanup Utility for Shared Memory
 
