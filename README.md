@@ -20,7 +20,7 @@ This program sets up the **initial shared state** for the Additive Veto Protocol
 
 These polynomials are accessed by all parties to securely encode their individual votes.
 
----
+--
 
 ### 🚀 What It Does
 
