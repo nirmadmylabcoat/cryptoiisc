@@ -66,7 +66,59 @@ Run this:
 ---
 
 ### ⚙️ How to Compile and Run
+1. Compile:
+     ```bash
+     g++ avpclean.cpp -o avpclean.exe -I <path_to_boost>
+     ./avpclean.exe
+
+## 🗳 `avpvote.cpp`: Vote Encoding and Sharing in AVP Protocol
+
+This program handles the **secure, privacy-preserving encoding of a vote** by a single party in the Additive Veto Protocol (AVP).
+
+---
+
+### 🔧 Responsibilities
+
+- Generates **additive shares** of a vote-masked polynomial, ensuring total sum is zero across all parties.
+- Reads shared polynomials (`a`) and uses it to encode a party’s vote.
+- Writes the encoded vote (`V_i`) to shared memory for tallying later.
+
+---
+
+### 🔗 Interactions
+
+- Reads:
+  - Shared polynomial `a` (`shared_poly_a`)
+- Writes:
+  - Shares: `Share_i_j` (from party `i` to `j`)
+  - Encoded vote: `PartyVote_i`
+- Uses:
+  - `shared_sync.hpp` to synchronize all parties (barrier after share exchange)
+
+---
+
+### ⚙️ Vote Encoding Logic
+
+- If vote = `0`:  
+  Encodes `V_i = a * x_i + e_i`, where `e_i` is small noise  
+  → Adds to the valid aggregated signal.
+
+- If vote = `1`:  
+  Encodes `V_i` as a **random high-noise polynomial**  
+  → Destroys the final result ⇒ veto.
+
+---
+
+### 📦 Dependencies
+
+- **Boost Interprocess**: For all shared memory communication.
+- **C++ Standard Library**: Vectors, randomness, math, memory operations.
+- **Local File**: `shared_sync.hpp` for party synchronization.
+
+---
+
+### 🛠 How to Compile and Use
 
 ```bash
-g++ avpclean.cpp -o avpclean.exe -I <path_to_boost>
-./avpclean.exe
+g++ avpvote.cpp -o avpvote.exe -I <path_to_boost>
+./avpvote.exe <party_id> <vote:0|1> <total_parties>
