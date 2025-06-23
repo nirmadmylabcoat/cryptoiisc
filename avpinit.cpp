@@ -42,6 +42,6 @@ int main() {
     shm_x.truncate(sizeof(int) * poly_degree);
     mapped_region reg_x(shm_x, read_write);
     memcpy(reg_x.get_address(), x.data(), sizeof(int) * poly_degree);
-    //cout << "Shared polynomials a and x initialized.\n";
+    /*cout << "Shared polynomials a and x initialized.\n";*/
     return 0;
 }
