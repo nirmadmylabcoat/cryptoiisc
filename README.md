@@ -72,7 +72,9 @@ Run this:
 1. Compile:
      ```bash
      g++ avpclean.cpp -o avpclean.exe -I <path_to_boost>
-     ./avpclean.exe
+2. Run:
+   ```bash
+   ./avpclean.exe
 
 ## 🗳 `avpvote.cpp`: Vote Encoding and Sharing in AVP Protocol
 
@@ -119,6 +121,8 @@ This program handles the **secure, privacy-preserving encoding of a vote** by a 
 - **Local File**: `shared_sync.hpp` for party synchronization.
 
 ---
+
+
 
 ### 🛠 How to Compile and Use
 
